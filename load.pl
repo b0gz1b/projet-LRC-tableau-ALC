@@ -4,7 +4,7 @@
 :- use_module(library(theme/dark)).
 :- encoding(utf8).
 
-:- [partie1].
+:- [source/partie1].
 programme :- 
 	premiere_etape(Tbox,Abi,Abr),
 	write('T-Box : '),print(Tbox),
