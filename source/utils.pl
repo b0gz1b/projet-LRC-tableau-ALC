@@ -3,6 +3,13 @@
  ***************/
 compteur(1).
 
+/*
+concat/3 : L1=Liste, L2=Liste, L3=Liste
+Concatène les deux listes L1 et L2 et renvoie la liste L3
+ */
+concat([],L1,L1).
+concat([X|Y],L1,[X|L2]) :- concat(Y,L1,L2).
+
 /* 
 enleve/3: X=Elem, L1=Liste, L2=Liste
 supprime X de L1 et renvoie la liste résultante dans L2.
