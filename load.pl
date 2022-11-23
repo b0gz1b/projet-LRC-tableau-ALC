@@ -20,4 +20,5 @@ programme :-
 	nl,
 	deuxieme_etape(Abi,Abi1,Tbox),
 	nl,write('A-Box concepts mise a jour: '),print(Abi1),
-	nl.
+	nl,
+	troisieme_etape(Abi1,Abr).

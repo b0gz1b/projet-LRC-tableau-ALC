@@ -18,7 +18,7 @@ Le prédicat programme est définit dans `load.pl` il est à modifier au fur et 
 	* acquisition_prop_type1 : Fait
 	* acquisition_prop_type2 : Fait
 3. Démonstration de la proposition
-	* tri_Abox : À faire
+	* tri_Abox : Fait
 	* resolution : À faire
 	* complete_some(Lie,Lpt,Li,Lu,Ls,Abr) : À faire
 	* transformation_and : À faire

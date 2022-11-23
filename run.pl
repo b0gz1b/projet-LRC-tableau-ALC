@@ -3,4 +3,4 @@
  */
 :- load_files(load,[silent(true)]).
 :- programme.
-:- prolog.
+:- break.
