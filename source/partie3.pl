@@ -117,10 +117,8 @@ transformation_or(Lie,Lpt,Li,Lu,Ls,Abr) :- % Deuxième noeud
 
 resolution([],[],[],[],Ls,_) :-
     member(_,Ls),
-    testclash(Ls),
-    nl, write("Echec de la resolution !"),
-    fail,
-    !.
+    not(testclash(Ls)),
+    nl, write("Echec de la resolution !").
 resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
     member(_,Lie),
     complete_some(Lie,Lpt,Li,Lu,Ls,Abr).
