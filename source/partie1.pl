@@ -417,7 +417,7 @@ aboxs([ABoxC,ABoxR],TBox,[ABoxCS | [ABoxR]]) :-
     !.
 
 /*
-traitement_ABox/3: ABox=[Liste[(Instance,Concept)], Liste[(Instance,,Instance,Role)]], 
+traitement_ABox/3: ABox=[Liste[(Instance,Concept)], Liste[(Instance,Instance,Role)]], 
                    TBoxT=Liste[(Concept,Expression)], 
                    ABoxS=[Liste[(Instance,Concept)], Liste[(Instance,,Instance,Role)]
 Vérifie la correction de la ABox et la simplifie selon la TBoxT puis la passe en FNN dans
