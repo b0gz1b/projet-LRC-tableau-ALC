@@ -34,14 +34,14 @@ infixe(or(C1,C2),T) :-
 infixe(some(R,C),T) :-
     infixe(R,RT),
     infixe(C,CT),
-    atom_concat('\u2200',RT,T1),
+    atom_concat('\u2203',RT,T1),
     atom_concat(T1,'.',T2),
     atom_concat(T2,CT,T),
     !.
 infixe(all(R,C),T) :-
     infixe(R,RT),
     infixe(C,CT),
-    atom_concat('\u2203',RT,T1),
+    atom_concat('\u2200',RT,T1),
     atom_concat(T1,'.',T2),
     atom_concat(T2,CT,T),
     !.
@@ -59,56 +59,47 @@ formatassertion((I1,I2,R),T) :-
     atom_concat(T2,IT2,T3),
     atom_concat(T3,'>',T4),
     atom_concat(T4,':',T5),
-    atom_concat(T5,RT,T),
-    !.
+    atom_concat(T5,RT,T).
 formatassertion((I,C),T) :-
     infixe(C,CT),
     atom_string(I,IT),
     atom_concat(IT,':',T1),
-    atom_concat(T1,CT,T),
-    !.
+    atom_concat(T1,CT,T).
 
 
 writeabi([]).
 writeabi([(I,C)]) :-
     formatassertion((I,C),T),
-    write(T),
-    !.
+    write(T).
 writeabi([(I,C)|AbiQ]) :-
     formatassertion((I,C),T),
     write(T),
     write(', '),
-    writeabi(AbiQ),
-    !.
+    writeabi(AbiQ).
 
 writeabr([]).
 writeabr([(I1,I2,R)]) :-
     formatassertion((I1,I2,R),T),
-    write(T),
-    !.
+    write(T).
 writeabr([(I1,I2,R)|AbrQ]) :-
     formatassertion((I1,I2,R),T),
     write(T),
     write(', '),
-    writeabi(AbrQ),
-    !.
+    writeabi(AbrQ).
 
 writeliste([]) :-
-    write('[]'),
-    !.
+    write('[]').
 writeliste(Abi) :-
     Abi = [(_,_)|_],
-    writeabi(Abi),
-    !.
+    writeabi(Abi).
 writeliste(Abr) :-
     Abr = [(_,_,_)|_],
-    writeabr(Abr),
-    !.
+    writeabr(Abr).
 
 affiche_Abox(Ls, Lie, Lpt, Li, Lu, Abr) :-
     write('\t'),write('Ls (I:C) = '), writeliste(Ls),nl,
-    write('\t'),write('Lie (a:\u2200R.C) = '), writeliste(Lie),nl,
-    write('\t'),write('Lpt (a:\u2203R.C) = '), writeliste(Lpt),nl,
+    write('\t'),write('Lie (a:\u2203R.C) = '), writeliste(Lie),nl,
+    write('\t'),write('Lpt (a:\u2200R.C) = '), writeliste(Lpt),nl,
     write('\t'),write('Li (a:C\u2293D) = '), writeliste(Li),nl,
     write('\t'),write('Lu (a:C\u2294D) = '), writeliste(Lu),nl,
     write('\t'),write('Abr (<a,b>:R) = '), writeliste(Abr).
@@ -154,50 +145,44 @@ add_to_set(E,S1,S2) :- list_to_set([E|S1],S2).
 evolue([], Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu, Ls).
 evolue([E|Q], Lie, Lpt, Li, Lu, Ls, Lie2, Lpt2, Li2, Lu2, Ls2) :-
     evolue(E, Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
-    evolue(Q, Lie1, Lpt1, Li1, Lu1, Ls1, Lie2, Lpt2, Li2, Lu2, Ls2),
-    !.
+    evolue(Q, Lie1, Lpt1, Li1, Lu1, Ls1, Lie2, Lpt2, Li2, Lu2, Ls2).
 evolue((I,some(R,C)), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt, Li, Lu, Ls) :-
-    add_to_set((I,some(R,C)), Lie, Lie1),
-    !.
+    add_to_set((I,some(R,C)), Lie, Lie1).
 evolue((I,all(R,C)), Lie, Lpt, Li, Lu, Ls, Lie, Lpt1, Li, Lu, Ls) :-
-    add_to_set((I,all(R,C)), Lpt, Lpt1),
-    !.
+    add_to_set((I,all(R,C)), Lpt, Lpt1).
 evolue((I,and(C1,C2)), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li1, Lu, Ls) :-
-    add_to_set((I,and(C1,C2)), Li, Li1),
-    !.
+    add_to_set((I,and(C1,C2)), Li, Li1).
 evolue((I,or(C1,C2)), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu1, Ls) :-
-    add_to_set((I,or(C1,C2)), Lu, Lu1),
-    !.
+    add_to_set((I,or(C1,C2)), Lu, Lu1).
 evolue((I,E), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu, Ls1) :-
-    add_to_set((I,E), Ls, Ls1),
-    !.
+    add_to_set((I,E), Ls, Ls1).
 
-testclash(Abi) :-
-    testclash(Abi,Abi).
-testclash([],_).
-testclash([(I,C)|Q],Abi) :-
+noclash(Abi) :-
+    noclash(Abi,Abi).
+noclash([],_).
+noclash([(I,C)|Q],Abi) :-
     nonmember((I,not(C)),Abi),
-    testclash(Q,Abi).
+    noclash(Q).
+
+testclash(Lie, Lpt, Li, Lu, Ls, Abr) :-
+    flatten([Lie, Lpt, Li, Lu, Ls], Abi),
+    noclash(Abi),
+    resolution(Lie,Lpt,Li,Lu,Ls,Abr).
+
 
 complete_some(Lie,Lpt,Li,Lu,Ls,Abr) :-
     enleve((I,some(R,C)),Lie,NewLie),
-    genere(B),
+    genere(B),!,
     evolue((B,C), NewLie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
-    concat((I,B,R),Abr,NewAbr),
-    nl,write('Regle \u2200 '),
+    concat([(I,B,R)],Abr,NewAbr),
     affiche_evolution_Abox(Ls, Lie, Lpt, Li, Lu, Abr, Ls1, Lie1, Lpt1, Li1, Lu1, NewAbr),
-    flatten([Lie1, Lpt1, Li1, Lu1, Ls1], Abi1),
-    testclash(Abi1),
-    resolution(Lie1,Lpt1,Li1,Lu1,Ls1,NewAbr).
+    testclash(Lie1, Lpt1, Li1, Lu1, Ls1, NewAbr).
 
 transformation_and(Lie,Lpt,Li,Lu,Ls,Abr) :-
     enleve((I,and(C1,C2)),Li,NewLi),
     evolue([(I,C1),(I,C2)], Lie, Lpt, NewLi, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
-    nl,write('Regle \u2293 '),
     affiche_evolution_Abox(Ls, Lie, Lpt, Li, Lu, Abr, Ls1, Lie1, Lpt1, Li1, Lu1, Abr),
-    flatten([Lie1, Lpt1, Li1, Lu1, Ls1], Abi1),
-    testclash(Abi1),
-    resolution(Lie1,Lpt1,Li1,Lu1,Ls1,Abr).
+    testclash(Lie1, Lpt1, Li1, Lu1, Ls1, Abr).
 
 /*
 Récupère toute les déductions possibles
@@ -212,46 +197,37 @@ allinstances((A,R,C),[_|AbrQ],AllInst) :-
 
 deduction_all(Lie,Lpt,Li,Lu,Ls,Abr) :-
     enleve((A,all(R,C)),Lpt,NewLpt),
-    member((A,_,R), Abr),
     allinstances((A,R,C),Abr,AllInst),
-    nl,write('Regle \u2203 '),
     evolue(AllInst, Lie, NewLpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
     affiche_evolution_Abox(Ls, Lie, Lpt, Li, Lu, Abr, Ls1, Lie1, Lpt1, Li1, Lu1, Abr),
-    flatten([Lie1, Lpt1, Li1, Lu1, Ls1],Abi1),
-    testclash(Abi1),
-    resolution(Lie1,Lpt1,Li1,Lu1,Ls1,Abr).
+    testclash(Lie1, Lpt1, Li1, Lu1, Ls1, Abr).
 
 transformation_or(Lie,Lpt,Li,Lu,Ls,Abr) :- % Premier noeud
-    enleve((I,or(C,_)), Lu, NewLu),
-    evolue((I,C),Lie, Lpt, Li, NewLu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
+    enleve((I,or(C1,C2)), Lu, NewLu),
     nl,write('Regle \u2294 1 '),
+    evolue((I,C1),Lie, Lpt, Li, NewLu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
     affiche_evolution_Abox(Ls, Lie, Lpt, Li, Lu, Abr, Ls1, Lie1, Lpt1, Li1, Lu1, Abr),
-    flatten([Lie1, Lpt1, Li1, Lu1, Ls1], Abi1),
-    testclash(Abi1),
-    resolution(Lie1,Lpt1,Li1,Lu1,Ls1,Abr).
-transformation_or(Lie,Lpt,Li,Lu,Ls,Abr) :- % Deuxième noeud
-    enleve((I,or(_,C)), Lu, NewLu),
-    evolue((I,C),Lie, Lpt, Li, NewLu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
+    testclash(Lie1, Lpt1, Li1, Lu1, Ls1, Abr),
     nl,write('Regle \u2294 2 '),
-    affiche_evolution_Abox(Ls, Lie, Lpt, Li, Lu, Abr, Ls1, Lie1, Lpt1, Li1, Lu1, Abr),
-    flatten([Lie1, Lpt1, Li1, Lu1, Ls1], Abi1),
-    testclash(Abi1),
-    resolution(Lie1,Lpt1,Li1,Lu1,Ls1,Abr).
+    evolue((I,C2),Lie, Lpt, Li, NewLu, Ls, Lie2, Lpt2, Li2, Lu2, Ls2),
+    affiche_evolution_Abox(Ls, Lie, Lpt, Li, Lu, Abr, Ls2, Lie2, Lpt2, Li2, Lu2, Abr),
+    testclash(Lie2, Lpt2, Li2, Lu2, Ls2, Abr).
 
 resolution([],[],[],[],Ls,_) :-
-    member(_,Ls),
-    not(testclash(Ls)),
-    nl, write("Echec de la resolution !").
+    noclash(Ls).
 resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
-    member(_,Lie),
+    member(_,Lie),!,
+    nl,write('Regle \u2203 '),
     complete_some(Lie,Lpt,Li,Lu,Ls,Abr).
 resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
-    member(_,Lpt),
-    deduction_all(Lie,Lpt,Li,Lu,Ls,Abr).
-resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
-    member(_,Li),
+    member(_,Li),!,
+    nl,write('Regle \u2293 '),
     transformation_and(Lie,Lpt,Li,Lu,Ls,Abr).
+resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
+    member((I,all(R,_)),Lpt),!,
+    member((I,_,R),Abr),!,
+    nl,write('Regle \u2200 '),
+    deduction_all(Lie,Lpt,Li,Lu,Ls,Abr).
 resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
     member(_,Lu),
     transformation_or(Lie,Lpt,Li,Lu,Ls,Abr).
-   
