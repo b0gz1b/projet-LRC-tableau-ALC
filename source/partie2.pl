@@ -1,7 +1,6 @@
 /************
  * Partie 2 *
  ************/
-:-[partie1].
 /*
  deuxieme_etape/3: Abi=Liste[(Instance,Concept)]
         ,Abi1=Liste[(Instance,Concept)],

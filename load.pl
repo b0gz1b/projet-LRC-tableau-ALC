@@ -4,9 +4,12 @@
 :- use_module(library(theme/dark)).
 :- encoding(utf8).
 
-:- [source/partie1,
+:- [source/donnees,
+	source/utils,
+	source/partie1,
 	source/partie2,
-	source/partie3].
+	source/partie3
+	].
 
 /*
 programme/0

@@ -1,15 +1,19 @@
 /************
  * Partie 3 *
  ************/
-:- [partie2].
 
 troisieme_etape(Abi,Abr) :-
     tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls),
-    nl,write('ABox etendu --------------------------------'),nl,
+    nl,write('ABox etendue --------------------------------'),nl,
     affiche_Abox(Ls,Lie,Lpt,Li,Lu,Abr),
     resolution(Lie,Lpt,Li,Lu,Ls,Abr),
     nl,write('Youpiiiiii, on a demontre la proposition initiale !!!'),
-    nl.
+    nl
+    ;
+    nl,write('Miiince, on a pas reussi a demontrer la proposition initiale !!!'),nl.
+
+resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
+    not(noresolution(Lie,Lpt,Li,Lu,Ls,Abr)).
 
 infixe(not(C),T) :-
     infixe(C,CT),
@@ -59,12 +63,12 @@ formatassertion((I1,I2,R),T) :-
     atom_concat(T2,IT2,T3),
     atom_concat(T3,'>',T4),
     atom_concat(T4,':',T5),
-    atom_concat(T5,RT,T).
+    atom_concat(T5,RT,T),!.
 formatassertion((I,C),T) :-
     infixe(C,CT),
     atom_string(I,IT),
     atom_concat(IT,':',T1),
-    atom_concat(T1,CT,T).
+    atom_concat(T1,CT,T),!.
 
 
 writeabi([]).
@@ -91,10 +95,10 @@ writeliste([]) :-
     write('[]').
 writeliste(Abi) :-
     Abi = [(_,_)|_],
-    writeabi(Abi).
+    writeabi(Abi),!.
 writeliste(Abr) :-
     Abr = [(_,_,_)|_],
-    writeabr(Abr).
+    writeabr(Abr),!.
 
 affiche_Abox(Ls, Lie, Lpt, Li, Lu, Abr) :-
     write('\t'),write('Ls (I:C) = '), writeliste(Ls),nl,
@@ -142,32 +146,47 @@ Permet l'ajout sans répétition
  */
 add_to_set(E,S1,S2) :- list_to_set([E|S1],S2).
 
-evolue([], Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu, Ls).
-evolue([E|Q], Lie, Lpt, Li, Lu, Ls, Lie2, Lpt2, Li2, Lu2, Ls2) :-
+evolueL([], Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu, Ls).
+evolueL([E|Q], Lie, Lpt, Li, Lu, Ls, Lie2, Lpt2, Li2, Lu2, Ls2) :-
     evolue(E, Lie, Lpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
-    evolue(Q, Lie1, Lpt1, Li1, Lu1, Ls1, Lie2, Lpt2, Li2, Lu2, Ls2).
+    evolueL(Q, Lie1, Lpt1, Li1, Lu1, Ls1, Lie2, Lpt2, Li2, Lu2, Ls2),!.
 evolue((I,some(R,C)), Lie, Lpt, Li, Lu, Ls, Lie1, Lpt, Li, Lu, Ls) :-
-    add_to_set((I,some(R,C)), Lie, Lie1).
+    add_to_set((I,some(R,C)), Lie, Lie1),!.
 evolue((I,all(R,C)), Lie, Lpt, Li, Lu, Ls, Lie, Lpt1, Li, Lu, Ls) :-
-    add_to_set((I,all(R,C)), Lpt, Lpt1).
+    add_to_set((I,all(R,C)), Lpt, Lpt1),!.
 evolue((I,and(C1,C2)), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li1, Lu, Ls) :-
-    add_to_set((I,and(C1,C2)), Li, Li1).
+    add_to_set((I,and(C1,C2)), Li, Li1),!.
 evolue((I,or(C1,C2)), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu1, Ls) :-
-    add_to_set((I,or(C1,C2)), Lu, Lu1).
+    add_to_set((I,or(C1,C2)), Lu, Lu1),!.
 evolue((I,E), Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu, Ls1) :-
     add_to_set((I,E), Ls, Ls1).
 
 noclash(Abi) :-
-    noclash(Abi,Abi).
-noclash([],_).
-noclash([(I,C)|Q],Abi) :-
+    noclashL(Abi,Abi).
+noclashL([],_).
+noclashL([(I,anything)|Q],Abi) :-
+    nonmember((I,nothing),Abi),
+    noclashL(Q,Abi),!.
+noclashL([(I,nothing)|Q],Abi) :-
+    enleve((I,nothing),Abi,Abi1),
+    nonmember((I,_),Abi1),
+    noclashL(Q,Abi),!.
+noclashL([(I,not(anything))|Q],Abi) :-
+    noclashL([(I,nothing)|Q],Abi),
+    !.
+noclashL([(I,not(nothing))|Q],Abi) :-
+    noclashL([(I,anything)|Q],Abi),
+    !.
+noclashL([(I,C)|Q],Abi) :-
+    C\==nothing,
+    C\==anything,
     nonmember((I,not(C)),Abi),
-    noclash(Q).
+    noclashL(Q,Abi),!.
 
 testclash(Lie, Lpt, Li, Lu, Ls, Abr) :-
     flatten([Lie, Lpt, Li, Lu, Ls], Abi),
     noclash(Abi),
-    resolution(Lie,Lpt,Li,Lu,Ls,Abr).
+    noresolution(Lie,Lpt,Li,Lu,Ls,Abr).
 
 
 complete_some(Lie,Lpt,Li,Lu,Ls,Abr) :-
@@ -180,7 +199,7 @@ complete_some(Lie,Lpt,Li,Lu,Ls,Abr) :-
 
 transformation_and(Lie,Lpt,Li,Lu,Ls,Abr) :-
     enleve((I,and(C1,C2)),Li,NewLi),
-    evolue([(I,C1),(I,C2)], Lie, Lpt, NewLi, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
+    evolueL([(I,C1),(I,C2)], Lie, Lpt, NewLi, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
     affiche_evolution_Abox(Ls, Lie, Lpt, Li, Lu, Abr, Ls1, Lie1, Lpt1, Li1, Lu1, Abr),
     testclash(Lie1, Lpt1, Li1, Lu1, Ls1, Abr).
 
@@ -198,36 +217,36 @@ allinstances((A,R,C),[_|AbrQ],AllInst) :-
 deduction_all(Lie,Lpt,Li,Lu,Ls,Abr) :-
     enleve((A,all(R,C)),Lpt,NewLpt),
     allinstances((A,R,C),Abr,AllInst),
-    evolue(AllInst, Lie, NewLpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
+    evolueL(AllInst, Lie, NewLpt, Li, Lu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
     affiche_evolution_Abox(Ls, Lie, Lpt, Li, Lu, Abr, Ls1, Lie1, Lpt1, Li1, Lu1, Abr),
     testclash(Lie1, Lpt1, Li1, Lu1, Ls1, Abr).
 
 transformation_or(Lie,Lpt,Li,Lu,Ls,Abr) :- % Premier noeud
-    enleve((I,or(C1,C2)), Lu, NewLu),
+    enleve((I,or(C1,_)), Lu, NewLu),
     nl,write('Regle \u2294 1 '),
     evolue((I,C1),Lie, Lpt, Li, NewLu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
     affiche_evolution_Abox(Ls, Lie, Lpt, Li, Lu, Abr, Ls1, Lie1, Lpt1, Li1, Lu1, Abr),
-    testclash(Lie1, Lpt1, Li1, Lu1, Ls1, Abr),
+    testclash(Lie1, Lpt1, Li1, Lu1, Ls1, Abr);
+    enleve((I,or(_,C2)), Lu, NewLu),
     nl,write('Regle \u2294 2 '),
     evolue((I,C2),Lie, Lpt, Li, NewLu, Ls, Lie2, Lpt2, Li2, Lu2, Ls2),
     affiche_evolution_Abox(Ls, Lie, Lpt, Li, Lu, Abr, Ls2, Lie2, Lpt2, Li2, Lu2, Abr),
     testclash(Lie2, Lpt2, Li2, Lu2, Ls2, Abr).
 
-resolution([],[],[],[],Ls,_) :-
-    noclash(Ls).
-resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
+noresolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
     member(_,Lie),!,
     nl,write('Regle \u2203 '),
     complete_some(Lie,Lpt,Li,Lu,Ls,Abr).
-resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
+noresolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
     member(_,Li),!,
     nl,write('Regle \u2293 '),
     transformation_and(Lie,Lpt,Li,Lu,Ls,Abr).
-resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
-    member((I,all(R,_)),Lpt),!,
-    member((I,_,R),Abr),!,
+noresolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
+    member((_,all(_,_)),Lpt),!,
     nl,write('Regle \u2200 '),
     deduction_all(Lie,Lpt,Li,Lu,Ls,Abr).
-resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
+noresolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
     member(_,Lu),
     transformation_or(Lie,Lpt,Li,Lu,Ls,Abr).
+noresolution([],[],[],[],Ls,_) :-
+    noclash(Ls),!.
