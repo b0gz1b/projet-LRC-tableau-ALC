@@ -10,22 +10,22 @@ Le prédicat programme est définit dans `load.pl` il est à modifier au fur et 
 ## Prédicats à réaliser
 
 # I. Etape préliminaire de vérification et de mise en forme de la Tbox et de la Abox
-	-[x] autoref
-	-[x] concept
-	-[x] traitement_Tbox
-	-[x] traitement_Abox
+	-[X] autoref
+	-[X] concept
+	-[X] traitement_Tbox
+	-[X] traitement_Abox
 # II. Saisie de la proposition à démontrer
-	-[x] acquisition_prop_type1
-	-[x] acquisition_prop_type2
+	-[X] acquisition_prop_type1
+	-[X] acquisition_prop_type2
 # III. Démonstration de la proposition
-	-[x] tri_Abox
-	-[x] resolution
-	-[x] complete_some(Lie,Lpt,Li,Lu,Ls,Abr)
-	-[x] transformation_and
-	-[x] deduction_all
-	-[x] transformation_or
-	-[x] evolue
-	-[x] affiche_evolution_Abox
+	-[X] tri_Abox
+	-[X] resolution
+	-[X] complete_some(Lie,Lpt,Li,Lu,Ls,Abr)
+	-[X] transformation_and
+	-[X] deduction_all
+	-[X] transformation_or
+	-[X] evolue
+	-[X] affiche_evolution_Abox
 
 ## TODO LIST
 
