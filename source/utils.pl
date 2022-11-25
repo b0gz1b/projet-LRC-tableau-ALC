@@ -44,9 +44,9 @@ genere(Nom) :-
     retract(compteur(V)),
     dynamic(compteur/1),
     assert(compteur(V1)),
-    nl,
-    nl,
-    nl,
+    %% nl,
+    %% nl,
+    %% nl,
     name(Nom,L2).
 nombre(0,[]).
 nombre(X,L1) :-
