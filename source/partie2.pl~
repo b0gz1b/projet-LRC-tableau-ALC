@@ -60,14 +60,14 @@ acquisition_prop_type1(Abi,Abi1,Tbox) :-
     write('Quel est le concept ? :'),
     nl,
     read(C),
-    concept(C),
+    concept(C), % pas sûr que ce soit suffisant comme vérification
 
 
     setof(X,cnamena(X),Lcc),
     setof(Y,cnamea(Y),Lca),
 
-
-    remplacecomplexe(C,Tbox,Lcc,Lca,CT),
+/* à vérifier */
+    remplacecomplexe(C,Tbox,Lcc,Lca,CT), % n'a pas l'air de renvoyer ce qu'on veut
     nnf(not(CT),NNCT), % passage en FNN
     concat([(I,NNCT)],Abi,Abi1).
 
@@ -76,18 +76,19 @@ acquisition_prop_type2(Abi,Abi1,Tbox) :-
     write('Quelle est le premier concept ? :'),
     nl,
     read(C1),
-    concept(C1),
+    concept(C1), % pas sûr que ce soit suffisant comme vérification
 
     nl,
     write('Quel est le second concept ? :'),
     nl,
     read(C2),
-    concept(C2),
+    concept(C2), % pas sûr que ce soit suffisant comme vérification
 
 
     setof(X,cnamena(X),Lcc),
     setof(Y,cnamea(Y),Lca),
 
+/* à vérifier */
     remplacecomplexe(and(C1,C2),Tbox,Lcc,Lca,CT),
     nnf(CT,NNCT), % passage en FNN
 
