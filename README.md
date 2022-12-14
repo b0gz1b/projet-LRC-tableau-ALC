@@ -31,6 +31,4 @@ Le prédicat programme est définit dans `load.pl`.
 
 ## TODO LIST
 
-- [ ] écrire le rapport
-- [ ] faire un jeu de test pour résolution
-- [ ] changer l'implémentation de l'affichage avec celle que tu m'a envoyé
+- [X] écrire le rapport

@@ -184,7 +184,7 @@ noclashL([(I,C)|Q],Abi) :-
     nonmember((I,not(C)),Abi),
     noclashL(Q,Abi),!.
 
-testclash([], [], [], [], Ls, _) :-
+testclash([], [], [], [], Ls, _) :- % fin de branche
     noclash(Ls),
     write("Branche ouverte"),nl,!
     ;
@@ -231,7 +231,7 @@ transformation_or(Lie,Lpt,Li,Lu,Ls,Abr) :- % Premier noeud
     write('Regle \u2294 1'),nl,
     evolue((I,C1),Lie, Lpt, Li, NewLu, Ls, Lie1, Lpt1, Li1, Lu1, Ls1),
     affiche_evolution_Abox(Ls, Lie, Lpt, Li, Lu, Abr, Ls1, Lie1, Lpt1, Li1, Lu1, Abr),
-    testclash(Lie1, Lpt1, Li1, Lu1, Ls1, Abr);
+    testclash(Lie1, Lpt1, Li1, Lu1, Ls1, Abr); % Second noeud
     enleve((I,or(_,C2)), Lu, NewLu),
     write('Regle \u2294 2'),nl,
     evolue((I,C2),Lie, Lpt, Li, NewLu, Ls, Lie2, Lpt2, Li2, Lu2, Ls2),
